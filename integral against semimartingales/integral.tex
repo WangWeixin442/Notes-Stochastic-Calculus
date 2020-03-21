@@ -1,0 +1,153 @@
+\documentclass[10pt,twocolumn]{article}
+
+\usepackage[letterpaper,margin=0.5in]{geometry}
+\usepackage{titlesec}
+\titleformat*{\section}{\large\bfseries}
+
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\diff}[1]{\mathrm{d}#1}
+\newcommand{\expect}[1]{\mathrm{E}\left[#1\right]}
+\newcommand{\condexpect}[2]{\mathrm{E}\left[\left.#1\right|#2\right]}
+
+\title{\textbf{Integrals against Semimartingales and Quadratic Variations}}
+\author{Weixin Wang}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+This note will focus on Chapter 7 of \textit{Foundations of Modern Probability, 2nd Edition} by Olav Kallenberg.
+Throughout this note, $\{\Omega, \mathcal{F}, \{\mathcal{F}_t\}_{t\geq0}, \mathbb{P}\}$ is a filtered probability space, where the filtration $\{\mathcal{F}_t\}$ is complete and right-continuous.
+Next we define semimartingales.
+
+\begin{definition}
+	A process $M$ is a \textbf{local martingale} if it is adapted to $\{\mathcal{F}_t\}$, and there exists a sequence of stopping times $\tau_n \uparrow \infty$ s.t. $M^{\tau_n} \triangleq M_{t \wedge \tau_n}$ is a martingale for each $n$.
+\end{definition}
+
+\begin{definition}
+	For any function $f:\mathbb{R}\to\mathbb{R}$, the total variation on the interval $[a,b]$ is
+	\begin{equation}
+	\norm{f}_a^b = \sup_{t_k}\sum_{k} \abs{f(t_k)-f(t_{k-1})},
+	\end{equation}
+	where the supremum extends over all finite partitions $a=t_0 < t_1 < \cdots < t_n=b$.
+\end{definition}
+
+\begin{definition}
+	A process $M$ is of locally finite variation if for every interval $[a,b]$, $\norm{M_t(\omega)}_a^b < \infty$ a.s..
+\end{definition}
+
+\begin{definition}
+	A process $X$ is a \textbf{continuous semimartigale} if it can be written as $X=M+A$, where $M$ is a continuous, local martingale, and $A$ is a continuous, adapted process of locally finite variation and with $A_0=0$. 
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Lebesgue-Stieltjes Integrals}
+The integral against $A$ is enabled by the following theorem which relates a function of locally finite variation to a singed measure.
+
+\begin{theorem}
+	For any right-continuous function $f$ of locally finite variation, there exists a unique signed measure $\nu$ on $\mathbb{R}$ such that $\nu(s,t] = f(t)-f(s)$ for all $s<t$.
+\end{theorem}
+
+With this, we can define the integral against $A$ pathwise using the Lebesgue-Stieltjes integral, as follows:
+\begin{definition}
+	Let $V$ be a real valued process, then the integral of $V$ against $A$ is
+	\begin{equation}
+	(V \cdot A)_t(\omega) = \int_0^t V(\omega) \diff{A_t(\omega)},
+	\end{equation}
+	where $\diff{A_t(\omega)}$ is the unique signed measure related to $A_t(\omega)$.
+\end{definition}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Quadratic Variations}
+
+Next, we focus on the harder part: the integral against a local martingale $M$.
+Let us first establish some basic properties of local martingales.
+\begin{lemma}
+	Every bounded local martingale is a martingale.
+\end{lemma}
+\begin{proof}
+	Suppose $M_t<B$ is a local martingale for all $t>0$, and $\{\tau_n\}$ is a localizing sequence.
+	It is clear that $M_t^{\tau_n} \to M_t$ a.s. since $\tau_n\uparrow\infty$.
+	Because $M_t^{\tau_n}$ is a martingale, $\condexpect{M_t^{\tau_n}}{\mathcal{F}_s} = M_s^{\tau_n}$ for all $s<t$, and by dominated convergence theorem,
+	\begin{equation}
+		\condexpect{M_t}{\mathcal{F}_s} = \lim\limits_{n\to\infty}\condexpect{M_t^{\tau_n}}{\mathcal{F}_s} = \lim\limits_{n\to\infty}M_s^{\tau_n} = M_s.
+	\end{equation}
+	This proves $M_t$ is a martingale.
+\end{proof}
+
+\begin{lemma}
+	Fix any stopping times $\tau_n\uparrow\infty$, then a process $M$ is a local martingale iff $M^{\tau_n}$ is a local martingale for all $n$.
+\end{lemma}
+\begin{proof}
+	``$\Rightarrow$'' is immediate since if $\{\sigma_n\}$ is a localizing sequence for $M$, then for any $\tau\in\{\tau_n\}$, $(M^t)^{\sigma_n} = (M^{\sigma_n})^\tau$ are true martingales.
+	So $\{\sigma_n\}$ is also a localizing sequence for $M^\tau$.
+	(Note here we used the fact that for any martingale $M$ and stopping time $\tau$, $M^\tau$ is also a martingale.)
+	
+	For ``$\Leftarrow$'', assume each local martingale $M^{\tau_n}$ has a localizing sequence $\sigma_n^k$.
+	Since $\sigma_n^k\to\infty$ a.s. for each $n$, we may choose indices such that
+	\begin{equation*}
+		\mathbb{P}\{\sigma_n^{k_n} < \tau_n \wedge n \} < 2^{-n}, \quad n\in\mathbb{N}.
+	\end{equation*}
+	By Borel-Cantelli lemma, $\sigma_n^{k_n}\to\infty$ a.s., which means $\tau'_n \triangleq \sigma_n^{k_n}\wedge\tau_n \to \infty$ a.s., so $\tau''_n \triangleq \inf_{m>n}\tau'_m \to \infty$ a.s..
+	Note that $\tau'_n$ and $\tau''_n$ are stopping times, and $\tau''_n$ are non-decreasing.
+	Also note that $M^{\tau''_n} = (M^{\tau'_n})^{\tau''_n}$ are true martingales since $M^{\tau'_n} = (M^{\tau_n})^{\sigma_n^{k_n}}$, which finishes the proof.
+\end{proof}
+
+\begin{proposition}
+	If $M$ is a continuous local martingale of locally finite variation, then $M=M_0$ a.s..
+\end{proposition}
+\begin{proof}
+	Without loss of generality, suppose $M_0=0$.
+	Let $V_t$ denote the total variation of $M$ on the interval $[0,t]$, then $V_t$ is continuous by the continuity of $M$, and is adapted.
+	For each $n\in\mathbb{N}$, let $\tau_n = \inf\{t\geq0 | V_t=n\}$, then $\{\tau_n\}$ are a sequence of non-decreasing stopping times that diverge a.s. since $M$ has locally finite variation.
+	Note that $M^{\tau_n}$ are bounded local martingales, and therefore are true martingales.
+	Furthermore, if $M^{\tau_n} = 0$ a.s. for all $n$, then $M=0$ a.s. since $M^{\tau_n} \to M$ a.s..
+	Because $M^{\tau_n}$ is a continuous martingale with total variation bounded by $n$, we may then consider only this special case.
+	
+	Fix $t>0$, write $t_{n,k} = kt/n$, then by the continuity of $M$,
+	\begin{align*}
+		\zeta_n &\triangleq \sum_{k \leq n} (M_{t_{n,k-1}}-M_{t_{n,k}})^2 \\
+		&\leq \max_{k \leq n} \abs{M_{t_{n,k-1}}-M_{t_{n,k}}} \cdot \sum_{k \leq n} \abs{M_{t_{n,k-1}}-M_{t_{n,k}}} \\
+		&\leq V_t \max_{k \leq n} \abs{M_{t_{n,k-1}}-M_{t_{n,k}}} \to 0 \quad \text{a.s.}.
+	\end{align*}
+	Note that $\zeta_n \leq V_t^2$ which is bounded by a constant, by dominated convergence that $\expect{\zeta_n} \to 0$.
+	Also, by the definition of martingales and the tower property of conditional expectation,
+	\begin{align*}
+		\expect{M_{t_{n,k-1}}M_{t_{n,k}}} &= \expect{\condexpect{M_{t_{n,k-1}}M_{t_{n,k}}}{\mathcal{F}_{t_{n,k-1}}}} \\
+		&= \expect{M_{t_{n,k-1}}^2}.
+	\end{align*}
+	This means $\expect{M_t^2} = \expect{\zeta_n} \to 0$.
+	Thus $M_t=0$ a.s. for each $t>0$.
+\end{proof}
+
+Before proceed to quadratic variations, we first introduce the elementary stochastic integration constructed from \textit{predictable step processes} of the form
+\begin{equation}
+	V_t = \sum_{k}\xi_k 1\{t>\tau_k\} = \sum_{k}\eta_k 1_{(\tau_k,\tau_{k+1}]}(t), \quad t\geq0,
+\end{equation}
+where the $\tau_n$ are stopping times with $\tau_k \uparrow \infty$ a.s., and the $\xi_k$ and $\eta_k$ are $\mathcal{F}_{\tau_k}$-measurable random variables for each $k\in\mathbb{N}$.
+Then for any process $X$, denote
+\begin{align}
+	(V \cdot X)_t = \int_0^t V\diff{X} &= \sum_k \xi_k(X_t-X_t^{\tau_k}) \nonumber \\
+	&= \sum_k \eta_k (X_{\tau_{k+1}}^t-X_{\tau_k}^t),
+\end{align}
+which is the elementary integral against $X$.
+
+\begin{lemma}
+	For any continuous $L^2$-martingale $M$ with $M_0=0$ and predictable step process $V$ with $\abs{V}\leq1$, the process $V \cdot M$ is again an $L^2$-martingale, and $\expect{(V \cdot M)_t^2} \leq \expect{M_t^2}$.
+\end{lemma}
+
+\end{document}
+
+
